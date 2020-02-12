@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 description = "Daemon Utilities by actix."
 repository = "https://github.com/aoyagikouhei/actix-daemon-utils-rs"
 keywords = ["actix", "daemon"]
-categories = ["Asynchronous"]
+categories = ["asynchronous"]
 readme = "Readme.md"
 documentation = "https://docs.rs/actix-daemon-utils"
 
