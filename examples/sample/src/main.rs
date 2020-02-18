@@ -1,15 +1,3 @@
-# actix-daemon-utils
-
-Daemon Utilities by actix.
-
-[Documentation](https://docs.rs/actix-daemon-utils)
-
-## Features
-- Graceful Stop by singals(hangup, interrupt, quit or terminate)
-- Loop daemon
-
-## Examples
-```rust
 use actix::prelude::*;
 use actix_daemon_utils::{
     graceful_stop::{GracefulStop},
@@ -46,4 +34,3 @@ fn main() {
     let _ = sys.run();
     println!("main terminated");
 }
-```
