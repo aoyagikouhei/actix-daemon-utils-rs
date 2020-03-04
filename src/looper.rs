@@ -19,7 +19,7 @@ enum NextLoop {
 
 /// This is a task call by Looper after specified seconds spend.
 #[derive(Message, Debug)]
-#[rtype(result = "u64")]
+#[rtype(result = "Option<Duration>")]
 pub struct Task;
 
 impl Looper {
@@ -51,16 +51,10 @@ impl Handler<NextLoop> for Looper {
             .send(Task)
             .into_actor(self)
             .then(move |res, act, ctx2| {
-                match res {
-                    Ok(secs) => {
-                        if secs > 0 {
-                            ctx2.notify(NextLoop::Later(Duration::from_secs(secs)));
-                        } else {
-                            ctx2.notify(NextLoop::Immediately);
-                        }
-                    }
-                    Err(_) => ctx2.notify(NextLoop::Immediately),
-                }
+                ctx2.notify(match res {
+                    Ok(Some(duration)) => NextLoop::Later(duration),
+                    _ => NextLoop::Immediately,
+                });
                 async {}.into_actor(act)
             })
             .wait(ctx);
