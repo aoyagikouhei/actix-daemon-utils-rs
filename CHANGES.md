@@ -1,5 +1,9 @@
 # Changes
 
+## [0.2.1] 2020-03-05
+
+* Modify Readme.md sample
+
 ## [0.2.0] 2020-03-05
 
 * Change Task wait u64 to Option<Duration>
