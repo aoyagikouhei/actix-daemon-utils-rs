@@ -15,6 +15,7 @@ use actix_daemon_utils::{
     graceful_stop::{GracefulStop},
     looper::{Looper, Task},
 };
+use std::time::Duration;
 
 struct MyActor { msg: String, seconds: u64 }
 
@@ -23,11 +24,11 @@ impl Actor for MyActor {
 }
 
 impl Handler<Task> for MyActor {
-    type Result = u64;
+    type Result = Option<std::time::Duration>;
 
     fn handle(&mut self, _msg: Task, _ctx: &mut Self::Context) -> Self::Result {
         println!("{}", self.msg);
-        self.seconds
+        Some(Duration::from_secs(self.seconds))
     }
 }
 
