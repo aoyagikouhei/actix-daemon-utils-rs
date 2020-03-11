@@ -6,7 +6,7 @@ Daemon Utilities by actix.
 
 ## Features
 - Graceful Stop by singals(hangup, interrupt, quit or terminate)
-- Loop daemon
+- Loop daemon(looper or delayer)
 
 ## Examples
 ```rust
