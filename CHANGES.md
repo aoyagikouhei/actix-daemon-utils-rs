@@ -1,5 +1,9 @@
 # Changes
 
+## [0.3.0] 2020-03-12
+
+* Add Delayer
+
 ## [0.2.1] 2020-03-05
 
 * Modify Readme.md sample
