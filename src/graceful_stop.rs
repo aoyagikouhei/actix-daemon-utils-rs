@@ -1,6 +1,10 @@
 use actix::prelude::*;
 use actix_rt::signal::unix::{signal, SignalKind};
-use std::sync::Arc;
+use crate::delayer::{Delayer, Task};
+use std::{
+    sync::Arc,
+    time::Duration,
+};
 use tokio::stream::StreamExt;
 
 /// This is a graceful stop for daemons.
@@ -24,6 +28,24 @@ impl GracefulStop {
 
     pub fn clone_system_terminator(&self) -> Arc<SystemTerminator> {
         Arc::clone(&self.system_terminator)
+    }
+
+    pub fn subscribe_ref(&mut self, recipient: Recipient<StopRequest>) {
+        self.stop_request_recipients.push(recipient);
+    }
+
+    pub fn start_with_delayers(receipts: Vec<(Recipient<Task>, Duration)>) -> Addr<Self> {
+        let mut graceful_stop = GracefulStop::new();
+        for receipt in receipts {
+            let delayer = Delayer::new(
+                receipt.0,
+                graceful_stop.clone_system_terminator(),
+                receipt.1,
+            )
+            .start();
+            graceful_stop.subscribe_ref(delayer.recipient());
+        }
+        graceful_stop.start()
     }
 }
 

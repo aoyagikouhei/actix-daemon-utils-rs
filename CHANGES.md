@@ -1,5 +1,9 @@
 # Changes
 
+## [0.3.1] 2020-07-28
+
+* Add start_with_delayers
+
 ## [0.3.0] 2020-03-12
 
 * Add Delayer

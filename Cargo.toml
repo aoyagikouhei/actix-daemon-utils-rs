@@ -1,6 +1,6 @@
 [package]
 name = "actix-daemon-utils"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["aoyagikouhei <aoyagi.kouhei@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -14,4 +14,4 @@ documentation = "https://docs.rs/actix-daemon-utils"
 [dependencies]
 actix = "^0.9"
 actix-rt = "^1.0"
-tokio = "^0.2"
+tokio = { version = "^0.2", features = ["stream"] }
