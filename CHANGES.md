@@ -1,5 +1,9 @@
 # Changes
 
+## [0.4.0] 2020-09-12
+
+* update actix 0.10, actix-rt 1.1
+
 ## [0.3.1] 2020-07-28
 
 * Add start_with_delayers
