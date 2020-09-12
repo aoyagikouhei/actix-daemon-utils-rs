@@ -2,3 +2,5 @@
 pub mod delayer;
 pub mod graceful_stop;
 pub mod looper;
+
+pub use actix;

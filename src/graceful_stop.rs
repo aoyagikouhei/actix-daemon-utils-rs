@@ -2,7 +2,10 @@ use actix::prelude::*;
 use actix_rt::signal::unix::{signal, SignalKind};
 use crate::delayer::{Delayer, Task};
 use std::{
-    sync::Arc,
+    sync::{
+        Arc,
+        mpsc::Sender,
+    },
     time::Duration,
 };
 use tokio::stream::StreamExt;
@@ -17,7 +20,14 @@ impl GracefulStop {
     pub fn new() -> GracefulStop {
         GracefulStop {
             stop_request_recipients: Vec::new(),
-            system_terminator: Arc::new(SystemTerminator),
+            system_terminator: Arc::new(SystemTerminator{sender: None}),
+        }
+    }
+
+    pub fn new_with_sender(sender: Sender<()>) -> GracefulStop {
+        GracefulStop {
+            stop_request_recipients: Vec::new(),
+            system_terminator: Arc::new(SystemTerminator{sender: Some(sender)}),
         }
     }
 
@@ -61,7 +71,7 @@ impl Actor for GracefulStop {
         ];
         for signal_kind in signals.into_iter() {
             let s = signal(*signal_kind).unwrap();
-            ctx.add_message_stream(s.map(move |_| SignalEvent))
+            ctx.add_message_stream(s.map(move |_| StopEvent))
         }
     }
 }
@@ -73,12 +83,12 @@ pub struct StopRequest;
 
 #[derive(Message)]
 #[rtype(result = "()")]
-struct SignalEvent;
+pub struct StopEvent;
 
-impl Handler<SignalEvent> for GracefulStop {
+impl Handler<StopEvent> for GracefulStop {
     type Result = ();
 
-    fn handle(&mut self, _signal_event: SignalEvent, ctx: &mut Self::Context) {
+    fn handle(&mut self, _signal_event: StopEvent, ctx: &mut Self::Context) {
         for recipient in self.stop_request_recipients.drain(..) {
             let _ = recipient.do_send(StopRequest);
         }
@@ -87,9 +97,19 @@ impl Handler<SignalEvent> for GracefulStop {
 }
 
 /// This is a system terminator. This will stop all Arc<SystemTerminator> released than is having actors.
-pub struct SystemTerminator;
+pub struct SystemTerminator{
+    sender: Option<Sender<()>>
+}
+
 impl Drop for SystemTerminator {
     fn drop(&mut self) {
-        actix::System::current().stop();
+        match self.sender {
+            Some(ref sender) => {
+                sender.send(()).unwrap();
+            },
+            None => {
+                actix::System::current().stop();
+            }
+        }
     }
 }

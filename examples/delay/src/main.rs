@@ -1,5 +1,8 @@
-use actix::prelude::*;
 use actix_daemon_utils::{
+    actix::{
+        prelude::*,
+        System,
+    },
     graceful_stop::{GracefulStop},
     delayer::{Delayer, Task, Timing},
 };
@@ -21,7 +24,7 @@ impl Handler<Task> for MyActor {
 }
 
 fn main() {
-    let sys = actix::System::new("main");
+    let sys = System::new("main");
     let graceful_stop = GracefulStop::new();
     let actor1 = MyActor { msg: "x".to_string(), seconds: 1 }.start();
     let actor2 = MyActor { msg: "y".to_string(), seconds: 3 }.start();

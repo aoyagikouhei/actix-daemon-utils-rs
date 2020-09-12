@@ -1,0 +1,14 @@
+[package]
+name = "web"
+version = "0.1.0"
+authors = ["aoyagikouhei <aoyagi_kouhei@uniquevision.co.jp>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "^3.0"
+actix-daemon-utils = {path="../.."}
+env_logger = "^0.7"
+futures = "^0.3"
+tokio = { version = "^0.2", features = ["signal"] }

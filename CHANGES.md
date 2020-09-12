@@ -1,5 +1,13 @@
 # Changes
 
+## [0.4.1] 2020-09-12
+
+* add gracefulstop mpsc
+
+* add example web with daemon
+
+* re-export actix
+
 ## [0.4.0] 2020-09-12
 
 * update actix 0.10, actix-rt 1.1
