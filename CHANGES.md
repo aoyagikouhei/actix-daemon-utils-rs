@@ -1,6 +1,6 @@
 # Changes
 
-## [0.4.1] 2020-09-12
+## [0.4.2] 2020-10-26
 
 * add gracefulstop mpsc
 
