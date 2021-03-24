@@ -12,6 +12,6 @@ readme = "Readme.md"
 documentation = "https://docs.rs/actix-daemon-utils"
 
 [dependencies]
-actix = "^0.10"
-actix-rt = "^1.1"
-tokio = { version = "^0.2", features = ["stream"] }
+actix = "~0.11.0"
+actix-rt = "~2"
+futures-util = "~0.3.13"

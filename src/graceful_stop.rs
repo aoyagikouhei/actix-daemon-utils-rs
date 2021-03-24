@@ -1,6 +1,7 @@
 use actix::prelude::*;
 use actix_rt::signal::unix::{signal, SignalKind};
 use crate::delayer::{Delayer, Task};
+use futures_util::stream::once;
 use std::{
     sync::{
         Arc,
@@ -8,7 +9,6 @@ use std::{
     },
     time::Duration,
 };
-use tokio::stream::StreamExt;
 
 /// This is a graceful stop for daemons.
 pub struct GracefulStop {
@@ -63,6 +63,7 @@ impl Actor for GracefulStop {
     type Context = Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
+        
         let signals = vec![
             Box::new(SignalKind::hangup()),
             Box::new(SignalKind::interrupt()),
@@ -70,8 +71,11 @@ impl Actor for GracefulStop {
             Box::new(SignalKind::terminate()),
         ];
         for signal_kind in signals.into_iter() {
-            let s = signal(*signal_kind).unwrap();
-            ctx.add_message_stream(s.map(move |_| StopEvent))
+            let mut s = signal(*signal_kind).unwrap();
+            ctx.add_message_stream(once(async move {
+                s.recv().await;
+                StopEvent
+            }));
         }
     }
 }
