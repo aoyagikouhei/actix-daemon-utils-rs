@@ -1,12 +1,9 @@
+use crate::delayer::{Delayer, Task};
 use actix::prelude::*;
 use actix_rt::signal::unix::{signal, SignalKind};
-use crate::delayer::{Delayer, Task};
 use futures_util::stream::once;
 use std::{
-    sync::{
-        Arc,
-        mpsc::Sender,
-    },
+    sync::{mpsc::Sender, Arc},
     time::Duration,
 };
 
@@ -20,14 +17,16 @@ impl GracefulStop {
     pub fn new() -> GracefulStop {
         GracefulStop {
             stop_request_recipients: Vec::new(),
-            system_terminator: Arc::new(SystemTerminator{sender: None}),
+            system_terminator: Arc::new(SystemTerminator { sender: None }),
         }
     }
 
     pub fn new_with_sender(sender: Sender<()>) -> GracefulStop {
         GracefulStop {
             stop_request_recipients: Vec::new(),
-            system_terminator: Arc::new(SystemTerminator{sender: Some(sender)}),
+            system_terminator: Arc::new(SystemTerminator {
+                sender: Some(sender),
+            }),
         }
     }
 
@@ -63,7 +62,6 @@ impl Actor for GracefulStop {
     type Context = Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
-        
         let signals = vec![
             Box::new(SignalKind::hangup()),
             Box::new(SignalKind::interrupt()),
@@ -101,8 +99,8 @@ impl Handler<StopEvent> for GracefulStop {
 }
 
 /// This is a system terminator. This will stop all Arc<SystemTerminator> released than is having actors.
-pub struct SystemTerminator{
-    sender: Option<Sender<()>>
+pub struct SystemTerminator {
+    sender: Option<Sender<()>>,
 }
 
 impl Drop for SystemTerminator {
@@ -110,7 +108,7 @@ impl Drop for SystemTerminator {
         match self.sender {
             Some(ref sender) => {
                 sender.send(()).unwrap();
-            },
+            }
             None => {
                 actix::System::current().stop();
             }

@@ -1,14 +1,14 @@
 use actix_daemon_utils::{
-    actix::{
-        prelude::*,
-        System,
-    },
-    graceful_stop::{GracefulStop},
+    actix::{prelude::*, System},
     delayer::{Delayer, Task, Timing},
+    graceful_stop::GracefulStop,
 };
 use std::time::Duration;
 
-struct MyActor { msg: String, seconds: u64 }
+struct MyActor {
+    msg: String,
+    seconds: u64,
+}
 
 impl Actor for MyActor {
     type Context = Context<Self>;
@@ -19,21 +19,42 @@ impl Handler<Task> for MyActor {
 
     fn handle(&mut self, task: Task, _ctx: &mut Self::Context) -> Self::Result {
         println!("{}", self.msg);
-        task.0.do_send(Timing::Later(Duration::from_secs(self.seconds)));
+        task.0
+            .do_send(Timing::Later(Duration::from_secs(self.seconds)));
     }
 }
 
 fn main() {
-    let sys = System::new("main");
+    let sys = System::new();
     let graceful_stop = GracefulStop::new();
-    let actor1 = MyActor { msg: "x".to_string(), seconds: 1 }.start();
-    let actor2 = MyActor { msg: "y".to_string(), seconds: 3 }.start();
-    let delayer1 = Delayer::new(actor1.recipient(), graceful_stop.clone_system_terminator(), Duration::from_secs(10)).start();
-    let delayer2 = Delayer::new(actor2.recipient(), graceful_stop.clone_system_terminator(), Duration::from_secs(10)).start();
-    graceful_stop
-        .subscribe(delayer1.recipient())
-        .subscribe(delayer2.recipient())
+    sys.block_on(async {
+        let actor1 = MyActor {
+            msg: "x".to_string(),
+            seconds: 1,
+        }
         .start();
+        let actor2 = MyActor {
+            msg: "y".to_string(),
+            seconds: 3,
+        }
+        .start();
+        let delayer1 = Delayer::new(
+            actor1.recipient(),
+            graceful_stop.clone_system_terminator(),
+            Duration::from_secs(10),
+        )
+        .start();
+        let delayer2 = Delayer::new(
+            actor2.recipient(),
+            graceful_stop.clone_system_terminator(),
+            Duration::from_secs(10),
+        )
+        .start();
+        graceful_stop
+            .subscribe(delayer1.recipient())
+            .subscribe(delayer2.recipient())
+            .start();
+    });
 
     let _ = sys.run();
     println!("main terminated");

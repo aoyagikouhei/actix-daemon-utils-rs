@@ -24,7 +24,11 @@ pub enum Timing {
 pub struct Task(pub Addr<Delayer>);
 
 impl Delayer {
-    pub fn new(task: Recipient<Task>, system_terminator: Arc<SystemTerminator>, error_duration: Duration) -> Self {
+    pub fn new(
+        task: Recipient<Task>,
+        system_terminator: Arc<SystemTerminator>,
+        error_duration: Duration,
+    ) -> Self {
         Self {
             task: task,
             system_terminator: system_terminator,
@@ -52,8 +56,8 @@ impl Handler<Timing> for Delayer {
         match self.task.do_send(Task(ctx.address())) {
             Err(SendError::Full(_)) => {
                 ctx.notify(Timing::Later(self.error_duration));
-            },
-            _ => {},
+            }
+            _ => {}
         }
     }
 }

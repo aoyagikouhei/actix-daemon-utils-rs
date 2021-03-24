@@ -1,5 +1,9 @@
 # Changes
 
+## [0.5.0] 2021-03-25
+* updated actix 0.11.0
+* changed example/sample, example/delay, but example/web not chenge until actix-web 4.0.0 release.
+
 ## [0.4.2] 2020-10-26
 
 * add gracefulstop mpsc
