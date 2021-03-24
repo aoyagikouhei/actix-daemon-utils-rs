@@ -30,7 +30,7 @@ impl Handler<Task> for MyActor {
 fn main() {
     let (tx, rx) = mpsc::channel::<()>();
 
-    let sys = System::new("main");
+    let sys = System::new();
     let graceful_stop = GracefulStop::new_with_sender(tx);
     //let graceful_stop = GracefulStop::new();
     let actor1 = MyActor { msg: "x".to_string(), seconds: 1 }.start();
