@@ -1,6 +1,6 @@
 [package]
 name = "actix-daemon-utils"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["aoyagikouhei <aoyagi.kouhei@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -12,6 +12,6 @@ readme = "Readme.md"
 documentation = "https://docs.rs/actix-daemon-utils"
 
 [dependencies]
-actix = "~0.11.0"
+actix = "~0.12.0"
 actix-rt = "~2"
 futures-util = "~0.3.13"
