@@ -53,7 +53,7 @@ impl Handler<Timing> for Delayer {
             ctx.notify_later(Timing::Immediately, duration);
             return;
         }
-        match self.task.do_send(Task(ctx.address())) {
+        match self.task.try_send(Task(ctx.address())) {
             Err(SendError::Full(_)) => {
                 ctx.notify(Timing::Later(self.error_duration));
             }

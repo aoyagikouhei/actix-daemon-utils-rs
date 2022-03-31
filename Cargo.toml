@@ -12,6 +12,6 @@ readme = "Readme.md"
 documentation = "https://docs.rs/actix-daemon-utils"
 
 [dependencies]
-actix = "~0.12.0"
+actix = "~0.13.0"
 actix-rt = "~2"
-futures-util = "~0.3.13"
+futures-util = "~0.3"

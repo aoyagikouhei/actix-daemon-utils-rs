@@ -1,7 +1,6 @@
 // refer from https://github.com/actix/examples/tree/master/shutdown-server
 
 use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
-use futures::executor;
 use std::{sync::mpsc, thread};
 
 use actix_daemon_utils::{
@@ -53,7 +52,7 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(move || {
         // give the server a Sender in .data
         App::new()
-            .data(tx.clone())
+            .app_data(web::Data::new(tx.clone()))
             .wrap(middleware::Logger::default())
             .service(hello)
             .service(stop)
@@ -79,13 +78,12 @@ async fn main() -> std::io::Result<()> {
         addr.do_send(StopEvent);
     });
 
-    // clone the Server handle
-    let srv = server.clone();
+    let srv = server.handle();
     thread::spawn(move || {
         rx2.recv().unwrap();
 
         // stop server gracefully
-        executor::block_on(srv.stop(true))
+        srv.stop(true)
     });
 
     // run server
