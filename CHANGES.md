@@ -1,5 +1,9 @@
 # Changes
 
+## [0.7.0] 2022-03-31
+* updated actix 0.13.0
+* change edition 2021
+
 ## [0.6.0] 2021-06-25
 * updated actix 0.12.0
 
